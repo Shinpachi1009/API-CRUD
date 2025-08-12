@@ -29,7 +29,7 @@ class CommentController extends Controller
             'body'=> ['required', 'max:100'],
         ]);
 
-        $comment = $post->comment()->create($input);
+        $comment = $post->comments()->create($input);
         return $comment;
     }
 
