@@ -31,7 +31,7 @@ class PostController extends Controller
         ]);
 
         $post = Post::create($input);
-        return ['posts' => $post];
+        return [$post, 'message'=>'Post have been Posted'];
     }
 
     /**
@@ -53,7 +53,7 @@ class PostController extends Controller
         ]);
 
         $post->update($input);
-        return $post;
+        return [$post, 'message'=>'Post have been Posted'];
     }
 
     /**

@@ -30,7 +30,7 @@ class CommentController extends Controller
         ]);
 
         $comment = $post->comments()->create($input);
-        return $comment;
+        return [$comment, 'message'=>'Comment have been posted'];
     }
 
     /**
@@ -52,7 +52,7 @@ class CommentController extends Controller
         ]);
         
         $comment->update($input);
-        return $comment;
+        return [$comment, 'message'=>'comment updated'];
     }
 
     /**
