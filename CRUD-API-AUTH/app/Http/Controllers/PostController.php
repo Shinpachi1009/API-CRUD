@@ -61,7 +61,7 @@ class PostController extends Controller implements HasMiddleware
         ]);
 
         $post->update($input);
-        return [$post, 'message'=>'Post have been Posted'];
+        return [$post, 'message'=>'Post have been Updated'];
     }
 
     /**

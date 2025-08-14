@@ -37,7 +37,9 @@ class CommentController extends Controller implements HasMiddleware
             'body'=>['required', 'max:100']
         ]);
 
-        $comment = $request->user()->comments()->create($input);
+        $comment = $request->user()->comments()->create([
+            'body'=>$input['body'], 'post_id'=>$post->id
+        ]);
         return [$comment, 'message'=>'Comment have been Posted'];
     }
 
@@ -55,11 +57,20 @@ class CommentController extends Controller implements HasMiddleware
      */
     public function update(Request $request, Post $post, Comment $comment)
     {
-        $input = $request->validate
-        ([
+        //$input = $request->validate
+        //([
+        //    'body'=>['required', 'max:100'],
+        //]);
+        //
+        //$comment->update($input);
+        //return [$comment, 'message'=>'comment updated'];
+
+        if($request->user()->id !== $comment->user_id){
+            return ['message'=>'You did not own this comment'];
+        }
+        $input=$request->validate([
             'body'=>['required', 'max:100'],
         ]);
-        
         $comment->update($input);
         return [$comment, 'message'=>'comment updated'];
     }
@@ -67,8 +78,12 @@ class CommentController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post, Comment $comment)
+    public function destroy(Request $request, Post $post, Comment $comment)
     {
+        if($request->user()->id !== $comment->user_id){
+            return['message'=>'You did not own this comment'];
+        }
+
         $comment->delete();
         return ['message'=>'comment deleted'];
     }
