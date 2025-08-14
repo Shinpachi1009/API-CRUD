@@ -64,13 +64,12 @@ class CommentController extends Controller implements HasMiddleware
         //
         //$comment->update($input);
         //return [$comment, 'message'=>'comment updated'];
-
-        if($request->user()->id !== $comment->user_id){
-            return ['message'=>'You did not own this comment'];
-        }
         $input=$request->validate([
             'body'=>['required', 'max:100'],
         ]);
+        if($request->user()->id !== $comment->user_id){
+            return ['message'=>'You did not own this comment'];
+        }
         $comment->update($input);
         return [$comment, 'message'=>'comment updated'];
     }
