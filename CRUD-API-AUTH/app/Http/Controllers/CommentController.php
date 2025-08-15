@@ -10,6 +10,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Gate;
 
 class CommentController extends Controller implements HasMiddleware
 {
@@ -55,7 +56,7 @@ class CommentController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post, Comment $comment)
+    public function update(Request $request,Post $post, Comment $comment)
     {
         //$input = $request->validate
         //([
@@ -64,12 +65,10 @@ class CommentController extends Controller implements HasMiddleware
         //
         //$comment->update($input);
         //return [$comment, 'message'=>'comment updated'];
+        Gate::authorize('modifyComment', $comment);
         $input=$request->validate([
             'body'=>['required', 'max:100'],
         ]);
-        if($request->user()->id !== $comment->user_id){
-            return ['message'=>'You did not own this comment'];
-        }
         $comment->update($input);
         return [$comment, 'message'=>'comment updated'];
     }
@@ -77,12 +76,9 @@ class CommentController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Post $post, Comment $comment)
+    public function destroy(Post $post, Comment $comment)
     {
-        if($request->user()->id !== $comment->user_id){
-            return['message'=>'You did not own this comment'];
-        }
-
+        Gate::authorize('modifyComment', $comment);
         $comment->delete();
         return ['message'=>'comment deleted'];
     }

@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AlbumController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +16,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::apiResource('posts', PostController::class);
 Route::apiResource('posts.comments', CommentController::class)->scoped();
+
+Route::apiResource('albums', AlbumController::class);
+Route::apiResource('albums.images', ImageController::class)->scoped();
 
 
 Route::post('/register', [AuthController::class, 'register']);
