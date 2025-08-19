@@ -2,11 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Models\Album;
 use App\Models\Comment;
+use App\Models\Image;
 use App\Models\Post;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
@@ -16,24 +19,54 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
 
-        Post::factory()
-        ->count(100)
-        ->create
-        ([
-            'title' => Str::random(rand(10, 25)),
-            'caption' => Str::random(rand(10, 255)),
-        ])
-        ->each(function($post)
-        {
-            Comment::factory()
-            ->count(5)
-            ->create
-            ([
-                'post_id' => $post->id,
-                'body' => Str::random(rand(10,100)),
-            ]);
-        });
+        $users = collect();
+        for ($i = 0; $i < 10; $i++) {
+            $name = fake()->name();
+            $users->push(User::create([
+                'name' => $name,
+                'email' => str_replace(' ', '', strtolower($name)) . $i . '@example.com',
+                'password' => Hash::make('12345678'),
+            ]));
+        }
+
+        $posts = collect();
+        for ($i = 0; $i < 100; $i++) {
+            $posts->push(Post::create([
+                'title' => Str::random(rand(10, 25)),
+                'caption' => Str::random(rand(10, 255)),
+                'user_id' => $users->random()->id,
+            ]));
+        }
+
+        foreach ($posts as $post) {
+            for ($j = 0; $j < 5; $j++) {
+                Comment::create([
+                    'body' => Str::random(rand(10, 100)),
+                    'post_id' => $post->id,
+                    'user_id' => $users->random()->id,
+                ]);
+            }
+        }
+
+        $albums = collect();
+        for ($i = 0; $i < 100; $i++) {
+            $albums->push(Album::create([
+                'title' => Str::random(rand(10, 25)),
+                'user_id' => $users->random()->id,
+            ]));
+        }
+
+        foreach ($albums as $album) {
+            for ($j = 0; $j < 5; $j++) {
+                $numLength = rand(1, 5);
+                $number = str_pad(mt_rand(0, pow(10, $numLength) - 1), $numLength, '0', STR_PAD_LEFT);
+                Image::create([
+                    'image_url' => 'https://' . Str::random(5) . '.com/' . $number . '/' . Str::random(rand(3, 10)) . '.jpg',
+                    'album_id' => $album->id,
+                    'user_id' => $users->random()->id,
+                ]);
+            }
+        }
     }
 }

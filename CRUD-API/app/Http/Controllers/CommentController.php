@@ -8,9 +8,19 @@ use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Gate;
 
-class CommentController extends Controller
+class CommentController extends Controller implements HasMiddleware
 {
+    public static function middleware() 
+    {
+        return [
+            new Middleware('auth:sanctum', except:['index', 'show'])
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -24,14 +34,16 @@ class CommentController extends Controller
      */
     public function store(Request $request, Post $post)
     {
-        $input = $request->validate
-        ([
-            'body'=> ['required', 'max:100'],
+        $input = $request -> validate([
+            'body'=>['required', 'max:100']
         ]);
 
-        $comment = $post->comments()->create($input);
-        return [$comment, 'message'=>'Comment have been posted'];
+        $comment = $request->user()->comments()->create([
+            'body'=>$input['body'], 'post_id'=>$post->id
+        ]);
+        return [$comment, 'message'=>'Comment have been Posted'];
     }
+
 
     /**
      * Display the specified resource.
@@ -44,13 +56,19 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post, Comment $comment)
+    public function update(Request $request,Post $post, Comment $comment)
     {
-        $input = $request->validate
-        ([
+        //$input = $request->validate
+        //([
+        //    'body'=>['required', 'max:100'],
+        //]);
+        //
+        //$comment->update($input);
+        //return [$comment, 'message'=>'comment updated'];
+        Gate::authorize('modifyComment', $comment);
+        $input=$request->validate([
             'body'=>['required', 'max:100'],
         ]);
-        
         $comment->update($input);
         return [$comment, 'message'=>'comment updated'];
     }
@@ -60,6 +78,7 @@ class CommentController extends Controller
      */
     public function destroy(Post $post, Comment $comment)
     {
+        Gate::authorize('modifyComment', $comment);
         $comment->delete();
         return ['message'=>'comment deleted'];
     }

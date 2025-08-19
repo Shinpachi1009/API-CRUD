@@ -3,14 +3,14 @@
 namespace App\Policies;
 
 use Illuminate\Auth\Access\Response;
-use App\Models\Comment;
+use App\Models\Album;
 use App\Models\User;
 
-class CommentPolicy
+class AlbumPolicy
 {
-    public function modifyComment(User $user, Comment $comment): Response
+    public function modifyAlbum(User $user, Album $album): Response
     {
-        return $user->id === $comment->user_id
+        return $user->id === $album->user_id
         ? Response::allow()
         : Response::deny('You did not own this post');
     }
