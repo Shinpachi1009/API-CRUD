@@ -38,11 +38,10 @@ class PostController extends Controller implements HasMiddleware
         $request -> validate([
             'title'=>['required', 'max:25'],
             'caption'=>['required'],
-            'image' => ['nullable', 'array', 'max:3'], // Must be an array, max 3 files
-            'image.*' => ['file', 'max:2048', 'mimes:png,jpg,webp'], // Each file must be an image
+            'image' => ['nullable', 'file', 'max:2048', 'mimes:png,jpg,webp']
         ]);
 
-        //use to store the image if it exists
+
         $path = null;
         if($request->hasFile('image')) {
             $path = Storage::disk('public')->put('posts_images', $request->file('image'));
