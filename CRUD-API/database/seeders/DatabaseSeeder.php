@@ -12,6 +12,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -33,8 +34,8 @@ class DatabaseSeeder extends Seeder
         $posts = collect();
         for ($i = 0; $i < 100; $i++) {
             $posts->push(Post::create([
-                'title' => Str::random(rand(10, 25)),
-                'caption' => Str::random(rand(10, 255)),
+                'title' => fake()->sentence(rand(3, 5)),
+                'caption' => fake()->sentence(rand(5, 15)),
                 'user_id' => $users->random()->id,
             ]));
         }
@@ -42,7 +43,7 @@ class DatabaseSeeder extends Seeder
         foreach ($posts as $post) {
             for ($j = 0; $j < 5; $j++) {
                 Comment::create([
-                    'body' => Str::random(rand(10, 100)),
+                    'body' => fake()->sentence(rand(5, 15)),
                     'post_id' => $post->id,
                     'user_id' => $users->random()->id,
                 ]);
