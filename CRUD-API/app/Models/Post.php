@@ -13,7 +13,6 @@ class Post extends Model
     protected $fillable = [
         'title',
         'caption',
-        'image',
     ];
 
     public function comments()

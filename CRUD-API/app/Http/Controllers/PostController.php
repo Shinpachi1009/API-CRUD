@@ -38,19 +38,14 @@ class PostController extends Controller implements HasMiddleware
         $request -> validate([
             'title'=>['required', 'max:25'],
             'caption'=>['required'],
-            'image' => ['nullable', 'file', 'max:2048', 'mimes:png,jpg,webp']
         ]);
 
 
-        $path = null;
-        if($request->hasFile('image')) {
-            $path = Storage::disk('public')->put('posts_images', $request->file('image'));
-        }
 
         $post = $request->user()->posts()->create([
             'title'=>$request->title,
             'caption'=>$request->caption,
-            'image'=>$path]);
+            ]);
         return [$post, 'message'=>'Post have been Posted'];
     }
 
