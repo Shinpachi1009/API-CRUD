@@ -15,10 +15,10 @@ use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller implements HasMiddleware
 {
-    public static function middleware() 
+    public static function middleware()
     {
         return [
-            new Middleware('auth:sanctum', except:['index', 'show'])
+            new Middleware('auth:sanctum', except: ['index', 'show'])
         ];
     }
 
@@ -35,18 +35,18 @@ class PostController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $request -> validate([
-            'title'=>['required', 'max:25'],
-            'caption'=>['required'],
+        $request->validate([
+            'title' => ['required', 'max:25'],
+            'caption' => ['required'],
         ]);
 
 
 
         $post = $request->user()->posts()->create([
-            'title'=>$request->title,
-            'caption'=>$request->caption,
-            ]);
-        return [$post, 'message'=>'Post have been Posted'];
+            'title' => $request->title,
+            'caption' => $request->caption,
+        ]);
+        return [$post, 'message' => 'Post have been Posted'];
     }
 
     /**
@@ -63,13 +63,13 @@ class PostController extends Controller implements HasMiddleware
     public function update(Request $request, Post $post)
     {
         Gate::authorize('modifyPost', $post);
-        $input = $request -> validate([
-            'title'=>['required', 'max:25'],
-            'caption'=>['required'],
+        $input = $request->validate([
+            'title' => ['required', 'max:25'],
+            'caption' => ['required'],
         ]);
 
         $post->update($input);
-        return [$post, 'message'=>'Post have been Updated'];
+        return [$post, 'message' => 'Post have been Updated'];
     }
 
     /**
@@ -79,13 +79,11 @@ class PostController extends Controller implements HasMiddleware
     {
         Gate::authorize('modifyPost', $post);
 
-        if($post->image) {
+        if ($post->image) {
             Storage::disk('public')->delete($post->image);
         }
 
         $post->delete();
-        return ['message'=>'post deleted'];
+        return ['message' => 'post deleted'];
     }
-
-    
 }

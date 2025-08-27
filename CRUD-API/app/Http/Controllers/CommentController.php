@@ -14,10 +14,10 @@ use Illuminate\Support\Facades\Gate;
 
 class CommentController extends Controller implements HasMiddleware
 {
-    public static function middleware() 
+    public static function middleware()
     {
         return [
-            new Middleware('auth:sanctum', except:['index', 'show'])
+            new Middleware('auth:sanctum', except: ['index', 'show'])
         ];
     }
 
@@ -34,14 +34,15 @@ class CommentController extends Controller implements HasMiddleware
      */
     public function store(Request $request, Post $post)
     {
-        $input = $request -> validate([
-            'body'=>['required', 'max:100']
+        $input = $request->validate([
+            'body' => ['required', 'max:100']
         ]);
 
         $comment = $request->user()->comments()->create([
-            'body'=>$input['body'], 'post_id'=>$post->id
+            'body' => $input['body'],
+            'post_id' => $post->id
         ]);
-        return [$comment, 'message'=>'Comment have been Posted'];
+        return [$comment, 'message' => 'Comment have been Posted'];
     }
 
 
@@ -56,7 +57,7 @@ class CommentController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request,Post $post, Comment $comment)
+    public function update(Request $request, Post $post, Comment $comment)
     {
         //$input = $request->validate
         //([
@@ -66,11 +67,11 @@ class CommentController extends Controller implements HasMiddleware
         //$comment->update($input);
         //return [$comment, 'message'=>'comment updated'];
         Gate::authorize('modifyComment', $comment);
-        $input=$request->validate([
-            'body'=>['required', 'max:100'],
+        $input = $request->validate([
+            'body' => ['required', 'max:100'],
         ]);
         $comment->update($input);
-        return [$comment, 'message'=>'comment updated'];
+        return [$comment, 'message' => 'comment updated'];
     }
 
     /**
@@ -80,6 +81,6 @@ class CommentController extends Controller implements HasMiddleware
     {
         Gate::authorize('modifyComment', $comment);
         $comment->delete();
-        return ['message'=>'comment deleted'];
+        return ['message' => 'comment deleted'];
     }
 }

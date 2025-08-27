@@ -57,11 +57,13 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
-    public function albums() {
+    public function albums()
+    {
         return $this->hasMany(Album::class);
     }
 
-    public function images() {
+    public function images()
+    {
         return $this->hasMany(Image::class);
     }
 }
