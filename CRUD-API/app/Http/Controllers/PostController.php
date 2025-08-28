@@ -79,10 +79,6 @@ class PostController extends Controller implements HasMiddleware
     {
         Gate::authorize('modifyPost', $post);
 
-        if ($post->image) {
-            Storage::disk('public')->delete($post->image);
-        }
-
         $post->delete();
         return ['message' => 'post deleted'];
     }
