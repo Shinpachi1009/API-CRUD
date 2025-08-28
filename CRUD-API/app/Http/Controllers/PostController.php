@@ -36,14 +36,12 @@ class PostController extends Controller implements HasMiddleware
     public function store(Request $request)
     {
         $request->validate([
-            'title' => ['required', 'max:25'],
             'caption' => ['required'],
         ]);
 
 
 
         $post = $request->user()->posts()->create([
-            'title' => $request->title,
             'caption' => $request->caption,
         ]);
         return [$post, 'message' => 'Post have been Posted'];
@@ -64,7 +62,6 @@ class PostController extends Controller implements HasMiddleware
     {
         Gate::authorize('modifyPost', $post);
         $input = $request->validate([
-            'title' => ['required', 'max:25'],
             'caption' => ['required'],
         ]);
 

@@ -34,7 +34,6 @@ class DatabaseSeeder extends Seeder
         $posts = collect();
         for ($i = 0; $i < 100; $i++) {
             $posts->push(Post::create([
-                'title' => fake()->sentence(rand(3, 5)),
                 'caption' => fake()->sentence(rand(5, 15)),
                 'user_id' => $users->random()->id,
             ]));
