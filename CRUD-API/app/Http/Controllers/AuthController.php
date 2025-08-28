@@ -21,40 +21,38 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $input = $request->validate
-        ([
-            'name'=>['required', 'max:50'],
-            'email'=>['required', 'email', 'unique:users'],
-            'password'=>['required', 'confirmed', 'min:8', 'max:20']
-        ]);
+        $input = $request->validate([
+                'name' => ['required', 'max:50'],
+                'email' => ['required', 'email', 'unique:users'],
+                'password' => ['required', 'confirmed', 'min:8', 'max:20']
+            ]);
 
         $user = User::create($input);
         $token = $user->createToken($request->name);
         return
-        [
-            'user'=>$user,
-            'token'=>$token->plainTextToken,
-            'message'=>'You are now Registered',
-        ];
+            [
+                'user' => $user,
+                'token' => $token->plainTextToken,
+                'message' => 'You are now Registered',
+            ];
     }
 
     public function login(Request $request)
     {
-        $request->validate
-        ([
-            'email'=>['required', 'email', 'exists:users'],
-            'password'=>['required']
-        ]);
+        $request->validate([
+                'email' => ['required', 'email', 'exists:users'],
+                'password' => ['required']
+            ]);
 
         $user = User::where('email', $request->email)->first();
-        if(!$user || !Hash::check($request->password, $user->password)){
-            return ['message'=> 'Password Incorrect'];
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return ['message' => 'Password Incorrect'];
         }
         $token = $user->createToken($user->name);
         return [
-            'user'=>$user,
-            'token'=>$token->plainTextToken,
-            'message'=>'You are now Logged In',
+            'user' => $user,
+            'token' => $token->plainTextToken,
+            'message' => 'You are now Logged In',
         ];
     }
 
@@ -62,6 +60,6 @@ class AuthController extends Controller
     {
         $request->user()->tokens()->delete();
 
-        return ['message'=>'You are Logged out'];
+        return ['message' => 'You are Logged out'];
     }
 }

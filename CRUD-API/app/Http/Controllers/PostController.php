@@ -15,10 +15,10 @@ use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller implements HasMiddleware
 {
-    public static function middleware() 
+    public static function middleware()
     {
         return [
-            new Middleware('auth:sanctum', except:['index', 'show'])
+            new Middleware('auth:sanctum', except: ['index', 'show'])
         ];
     }
 
@@ -35,23 +35,16 @@ class PostController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $request -> validate([
-            'title'=>['required', 'max:25'],
-            'caption'=>['required'],
-            'image' => ['nullable', 'file', 'max:2048', 'mimes:png,jpg,webp']
+        $request->validate([
+            'caption' => ['required'],
         ]);
 
 
-        $path = null;
-        if($request->hasFile('image')) {
-            $path = Storage::disk('public')->put('posts_images', $request->file('image'));
-        }
 
         $post = $request->user()->posts()->create([
-            'title'=>$request->title,
-            'caption'=>$request->caption,
-            'image'=>$path]);
-        return [$post, 'message'=>'Post have been Posted'];
+            'caption' => $request->caption,
+        ]);
+        return [$post, 'message' => 'Post have been Posted'];
     }
 
     /**
@@ -68,13 +61,12 @@ class PostController extends Controller implements HasMiddleware
     public function update(Request $request, Post $post)
     {
         Gate::authorize('modifyPost', $post);
-        $input = $request -> validate([
-            'title'=>['required', 'max:25'],
-            'caption'=>['required'],
+        $input = $request->validate([
+            'caption' => ['required'],
         ]);
 
         $post->update($input);
-        return [$post, 'message'=>'Post have been Updated'];
+        return [$post, 'message' => 'Post have been Updated'];
     }
 
     /**
@@ -84,13 +76,7 @@ class PostController extends Controller implements HasMiddleware
     {
         Gate::authorize('modifyPost', $post);
 
-        if($post->image) {
-            Storage::disk('public')->delete($post->image);
-        }
-
         $post->delete();
-        return ['message'=>'post deleted'];
+        return ['message' => 'post deleted'];
     }
-
-    
 }
